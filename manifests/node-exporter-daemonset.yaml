@@ -20,6 +20,7 @@ spec:
         - --path.procfs=/host/proc
         - --path.sysfs=/host/sys
         - --path.rootfs=/host/root
+        - --collector.textfile.directory=/run/prometheus
         - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
         - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
         image: quay.io/prometheus/node-exporter:v0.18.1
@@ -42,6 +43,9 @@ spec:
           mountPropagation: HostToContainer
           name: root
           readOnly: true
+        - name: collector-textfiles
+          readOnly: true
+          mountPath: /run/prometheus
       - args:
         - --logtostderr
         - --secure-listen-address=$(IP):9100
@@ -65,6 +69,14 @@ spec:
           requests:
             cpu: 10m
             memory: 20Mi
+      - image: nvidia/dcgm-exporter:1.4.6
+        name: nvidia-dcgm-exporter
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
+        volumeMounts:
+        - name: collector-textfiles
+          mountPath: /run/prometheus
       hostNetwork: true
       hostPID: true
       nodeSelector:
@@ -85,3 +97,6 @@ spec:
       - hostPath:
           path: /
         name: root
+      - name: collector-textfiles
+        emptyDir:
+          medium: Memory

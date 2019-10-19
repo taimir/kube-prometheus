@@ -12,3 +12,5 @@ spec:
     targetPort: http
   selector:
     app: grafana
+  externalIPs:
+    - 10.250.144.200

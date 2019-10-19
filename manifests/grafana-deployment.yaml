@@ -101,6 +101,7 @@ spec:
           readOnly: false
       nodeSelector:
         beta.kubernetes.io/os: linux
+        beta.kubernetes.io/arch: amd64
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534

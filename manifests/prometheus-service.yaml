@@ -14,3 +14,5 @@ spec:
     app: prometheus
     prometheus: k8s
   sessionAffinity: ClientIP
+  externalIPs:
+    - 10.250.144.200
